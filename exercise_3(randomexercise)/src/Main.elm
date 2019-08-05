@@ -1,12 +1,10 @@
 import Random
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
-
 import Browser
 import Html exposing (..)
 import Html.Attributes exposing (style)
 import Html.Events exposing (..)
-import Random
 
 
 
@@ -28,37 +26,59 @@ main =
 
 type alias Model =
   { dieFace : Int
+    ,secFaces :Bool
   }
 
 
 init : () -> (Model, Cmd Msg)
 init _ =
-  ( Model 1
-  , Cmd.none
-  )
+  ( {dieFace = 1,secFaces =True  }, Cmd.none  )
+ 
+  
+
+
+usuallyTrue : Random.Generator Bool
+usuallyTrue =
+  Random.weighted (50, True) [ (50, False) ]
 
 
 
+probability : Random.Generator Int
+probability =
+  Random.int 0 1
 -- UPDATE
 
 
 type Msg
   = Roll
-  | NewFace Int
+   |NewFace Int
+   |SecFace Bool
 
 
-update : Msg -> Model -> (Model, Cmd Msg)
+update : Msg -> Model ->( Model, Cmd Msg )
 update msg model =
   case msg of
     Roll ->
-      ( model
-      , Random.generate NewFace (Random.int 0 1)
+      ( model,
+        Cmd.batch
+            [ Random.generate NewFace probability
+            , Random.generate SecFace usuallyTrue
+            ]
       )
-
+    
     NewFace newFace ->
-      ( Model newFace
+      ( { model | dieFace = newFace }
       , Cmd.none
       )
+
+
+    SecFace secFace ->
+      ( { model | secFaces = secFace }
+      , Cmd.none
+      )
+
+ 
+
 
 
 
@@ -79,6 +99,7 @@ view model =
      div[] [
      viewValidation model
    ,  button [ onClick Roll ] [Html.text "Roll" ]
+   ,viewValimage model
     ]
 
 
@@ -87,7 +108,62 @@ view model =
 viewValidation : Model -> Html msg
 viewValidation model =
   if model.dieFace== 0  then
-    div [style "color" "green" ] [Html.text "OK" ]
+     svg
+    [ width "120"
+    , height "120"
+    , viewBox "0 0 120 120"
+    ]
+    [   circle
+        [ cx "50"
+        , cy "50"
+        , r "50"
+        ]
+        []
+        ]
   else
-    div [style "color" "red" ] [Html.text "Passwords do not match!" ]
+     svg
+    [ width "120"
+    , height "120"
+    , viewBox "0 0 120 120"
+    ]
+    [ circle
+        [ cx "30"
+        , cy "30"
+        , r "30"
+        
+        
+        ]
+        []
+    ]
 
+
+viewValimage : Model -> Html msg
+viewValimage model =
+  if model.secFaces == True  then
+     svg
+    [ width "120"
+    , height "120"
+    , viewBox "0 0 120 120"
+    ]
+    [   circle
+        [ cx "50"
+        , cy "50"
+        , r "50"
+        ]
+        []
+        ]
+  else
+     svg
+    [ width "120"
+    , height "120"
+    , viewBox "0 0 120 120"
+    ]
+    [ circle
+        [ cx "30"
+        , cy "30"
+        , r "30"
+        
+        
+        ]
+        []
+    ]
