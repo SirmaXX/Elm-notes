@@ -30,5 +30,8 @@ https://gist.github.com/SirmaXX/895e18b307f9f60c19edce34412d3a9f
 
 - Gify random gif finder
 https://github.com/SirmaXX/gify-
+
+-Elm project creator shell
+https://gist.github.com/SirmaXX/4b0c27827974ddd28b20581302274169#file-elm-sh
 ## thanks for helping
 Elm community 
